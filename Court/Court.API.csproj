@@ -13,6 +13,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Court.Data\Court.Data.csproj" />
     <ProjectReference Include="..\Court.Entities\Court.Entities.csproj" />
+    <ProjectReference Include="..\Court.Identity\Court.Identity.csproj" />
   </ItemGroup>
 
   <ItemGroup>

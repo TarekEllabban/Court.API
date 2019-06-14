@@ -5,8 +5,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="User.ViewModels\" />
-    <Folder Include="User\" />
+    <Folder Include="Commands\" />
+    <Folder Include="ViewModels\" />
   </ItemGroup>
 
 </Project>

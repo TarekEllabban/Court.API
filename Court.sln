@@ -5,9 +5,11 @@ VisualStudioVersion = 15.0.28307.572
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Court.API", "Court\Court.API.csproj", "{59E80252-0F88-4E10-B21B-22708D5F5152}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Court.Entities", "Court.Entities\Court.Entities.csproj", "{36A09526-C98E-45EE-B454-FFE93F0BDB54}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Court.Entities", "Court.Entities\Court.Entities.csproj", "{36A09526-C98E-45EE-B454-FFE93F0BDB54}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Court.Data", "Court.Data\Court.Data.csproj", "{2C3BE6F9-4B0D-44CA-B7FD-EADE175DA1D9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Court.Data", "Court.Data\Court.Data.csproj", "{2C3BE6F9-4B0D-44CA-B7FD-EADE175DA1D9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Court.Identity", "Court.Identity\Court.Identity.csproj", "{7D411375-9F77-40A8-9DC1-6FE8DD81F9DE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{2C3BE6F9-4B0D-44CA-B7FD-EADE175DA1D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2C3BE6F9-4B0D-44CA-B7FD-EADE175DA1D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2C3BE6F9-4B0D-44CA-B7FD-EADE175DA1D9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7D411375-9F77-40A8-9DC1-6FE8DD81F9DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7D411375-9F77-40A8-9DC1-6FE8DD81F9DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7D411375-9F77-40A8-9DC1-6FE8DD81F9DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7D411375-9F77-40A8-9DC1-6FE8DD81F9DE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
