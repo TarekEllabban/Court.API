@@ -1,26 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Court.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Court.API.IServices;
 using Court.API.Services;
-using Court.Entities.ViewModels;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
 using Microsoft.AspNetCore.Authorization;
+using Court.Identity;
 using Microsoft.AspNetCore.Mvc.Authorization;
 
 namespace Court
@@ -37,6 +28,7 @@ namespace Court
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            #region AddMvc
             services.AddMvc(o =>
             {
                 var policy = new AuthorizationPolicyBuilder()
@@ -44,8 +36,12 @@ namespace Court
                     .Build();
                 o.Filters.Add(new AuthorizeFilter(policy));
             }).SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            #endregion
+
+            #region DB Context
             services.AddDbContext<CourtContext>(options => options.UseSqlServer(Configuration.GetConnectionString("CourtConnection")));
             services.AddDbContext<CourtIdentityContext>(options => options.UseSqlServer(Configuration.GetConnectionString("CourtConnection")));
+            #endregion
 
             #region Identity Registeration [IdentityUser]
             //services.AddIdentityCore<IdentityUser>(options => { });
@@ -58,34 +54,52 @@ namespace Court
                 .AddDefaultTokenProviders();
             #endregion
 
+            #region Identity Server
+            services.AddIdentityServer()
+                .AddDeveloperSigningCredential()
+                .AddInMemoryIdentityResources(Config.GetIdentityResources())
+                .AddInMemoryApiResources(Config.GetApiResources())
+                .AddInMemoryClients(Config.GetClients())
+                //.AddTestUsers(Config.GetUsers());
+               .AddAspNetIdentity<IdentityUser>();
+            #endregion
+
             #region Authentication
-            var token = Configuration.GetSection("TokenManagement").Get<TokenManagementViewModel>();
-            var secret = Encoding.ASCII.GetBytes(token.Secret);
-            services.AddAuthentication(x =>
+            services.AddAuthentication(options =>
             {
-                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            }).AddJwtBearer(x =>
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(options =>
             {
-                x.RequireHttpsMetadata = false;
-                x.SaveToken = true;
-                x.TokenValidationParameters = new TokenValidationParameters
+                // base-address of your identityserver
+                options.Authority = Configuration["AuthorityUrl"];
+
+                // name of the API resource
+                options.Audience = "Court.API";
+
+                options.RequireHttpsMetadata = false;
+
+                options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters()
                 {
+                    ValidIssuer = Configuration["AuthorityUrl"],
+                    ValidAudience = "Court.API",
                     ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(token.Secret)),
-                    ValidIssuer = token.Issuer,
-                    ValidAudience = token.Audience,
+                    ValidateLifetime = true,
                     ValidateIssuer = true,
-                    ValidateAudience = true
+                    ValidateAudience = true,
+                    ClockSkew = TimeSpan.Zero
                 };
             });
-            #endregion
+            #endregion      
 
             #region DI
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<Identity.IServices.IUserManager, Identity.Services.UserManager>();
             services.AddScoped<IAuthenticationService, AuthenticationService>();
-            #endregion
+            #endregion  
+
+            services.AddCors();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -102,8 +116,9 @@ namespace Court
             }
 
             app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+            //app.UseHttpsRedirection();
+            app.UseIdentityServer();
             app.UseAuthentication();
-            app.UseHttpsRedirection();
             app.UseMvc();
         }
     }

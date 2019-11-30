@@ -9,27 +9,21 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Court.API.Controllers
 {
-    public class AccountController : Controller
+    [Route("api/[controller]")]
+    public class AccountController : ControllerBase
     {
         private IAccountService _accountService;
-        public AccountController(IAccountService accountService = null)
+        public AccountController(IAccountService accountService)
         {
             this._accountService = accountService;
         }
-        [Route("api/account/register")]
-        [HttpPost]
+        [HttpPost("register")]
         [AllowAnonymous]
         public async Task<IActionResult> Register([FromBody] RegisterUserCommand registerUserCommand)
         {
-            var isRegisteredSuccessfully = await _accountService.RegisterUser(registerUserCommand);
-            if (isRegisteredSuccessfully)
-            {
-                return Ok();
-            }
-            else
-            {
-                return StatusCode(500);
-            }
+            var response = await _accountService.RegisterUser(registerUserCommand);
+            return Ok(response);
+           
         }
     }
 }

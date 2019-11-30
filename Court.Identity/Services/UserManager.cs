@@ -21,13 +21,17 @@ namespace Court.Identity.Services
         }
         public async Task<bool> FindUserByEmailAndPassword(string email, string password)
         {
-            var user = await _userManager.FindByEmailAsync(email);
+            var user = await FindUserByEmail(email);
             if (user != null)
             {
                 var validUserPassword = await _userManager.CheckPasswordAsync(user, password);
                 return validUserPassword;
             }
             return false;
+        }
+        public async Task<IdentityUser> FindUserByEmail(string email)
+        {
+            return await _userManager.FindByEmailAsync(email);
         }
     }
 }

@@ -1,7 +1,9 @@
 ﻿using Court.API.IServices;
 using Court.Entities.Commands;
+using Court.Entities.ViewModels;
 using Court.Identity.IServices;
 using Microsoft.AspNetCore.Identity;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,12 +18,49 @@ namespace Court.API.Services
         {
             this._userManager = userManager;
         }
-        public async Task<bool> RegisterUser(RegisterUserCommand registerUserCommand)
+        public async Task<ResponseViewModel> RegisterUser(RegisterUserCommand registerUserCommand)
         {
-            var user = new IdentityUser();
-            user.Email = registerUserCommand.Email;
-            user.UserName = registerUserCommand.Email;
-            return await _userManager.CreateUser(user, registerUserCommand.Password);
+            var response = new ResponseViewModel();
+
+            if (!string.IsNullOrEmpty(registerUserCommand.Username) && !string.IsNullOrEmpty(registerUserCommand.Password))
+            {
+                var user = new IdentityUser();
+                user.Email = registerUserCommand.Username;
+                user.UserName = registerUserCommand.Username;
+
+                var userExist = await _userManager.FindUserByEmail(registerUserCommand.Username);
+
+                if (userExist == null)
+                {
+                    response.IsSucceeded = await _userManager.CreateUser(user, registerUserCommand.Password);
+
+                    if (response.IsSucceeded)
+                    {
+                        var identityUser = await _userManager.FindUserByEmail(registerUserCommand.Username);
+                        if (identityUser != null)
+                        {
+                            var Data = new
+                            {
+                                IdentityId = identityUser.Id
+                            };
+                            response.Data = JsonConvert.SerializeObject(Data);
+                        }
+
+                    }
+                }
+                else
+                {
+                    response.IsSucceeded = false;
+                    response.Message = "User is already exist";
+                }
+            }
+            else
+            {
+                response.IsSucceeded = false;
+                response.Message = "Invalid Input";
+            }
+            return response;
         }
+
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Court.Entities.Commands;
+using Court.Entities.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,6 +9,6 @@ namespace Court.API.IServices
 {
     public interface IAccountService
     {
-        Task<bool> RegisterUser(RegisterUserCommand registerUserCommand);
+        Task<ResponseViewModel> RegisterUser(RegisterUserCommand registerUserCommand);
     }
 }
