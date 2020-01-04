@@ -33,5 +33,9 @@ namespace Court.Identity.Services
         {
             return await _userManager.FindByEmailAsync(email);
         }
+        public async Task<IdentityUser> FindUserByIdAsync(string id)
+        {
+            return await _userManager.FindByIdAsync(id);
+        }
     }
 }

@@ -11,5 +11,6 @@ namespace Court.Identity.IServices
         Task<bool> CreateUser(IdentityUser user, string password);
         Task<bool> FindUserByEmailAndPassword(string email, string password);
         Task<IdentityUser> FindUserByEmail(string email);
+        Task<IdentityUser> FindUserByIdAsync(string id);
     }
 }

@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Court.Identity;
 using Microsoft.AspNetCore.Mvc.Authorization;
+using IdentityServer4.Services;
 
 namespace Court
 {
@@ -97,7 +98,8 @@ namespace Court
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<Identity.IServices.IUserManager, Identity.Services.UserManager>();
             services.AddScoped<IAuthenticationService, AuthenticationService>();
-            #endregion  
+            services.AddScoped<IProfileService, ProfileService>();
+            #endregion
 
             services.AddCors();
         }
